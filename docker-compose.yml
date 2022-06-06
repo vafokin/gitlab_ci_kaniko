@@ -8,8 +8,6 @@ services:
       - django_net
     ports:
       - "8000:8000"
-#    volumes:
-#      - ./django_blog-master/config/nginx/django.conf:/etc/nginx/conf.d/django.conf
 
   db:
     restart: always
@@ -18,7 +16,12 @@ services:
       - django_net
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
-  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     restart: always
     build: ./django1/
@@ -27,8 +30,10 @@ services:
     expose:
       - "8000"
     depends_on: 
-      - db
-      - nginx 
+      db:
+        condition: service_healthy
+    depends_on:
+      - nginx
     command: bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
 
 networks:
