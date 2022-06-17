@@ -4,6 +4,23 @@ stages:
 build_prod:
   stage: build
   tags: 
-    - vadeb11-runner
+    - vadeb11_runner
+  variables:
+    PROD: "app_prod"
+    PORT: '8000'
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_COMMIT_REF_NAME = "master"'
+      when: always
+
+build_dev:
+  stage: build
+  tags:
+    - vadeb11_runner
+  variables:
+    DEV: "app_dev"
+    PORT: '8001'
   script:
     - docker-compose up -d

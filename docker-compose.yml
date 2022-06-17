@@ -7,7 +7,7 @@ services:
     networks:
       - django_net
     ports:
-      - "8000:8000"
+      - "$PORT:8000"
 
   db:
     restart: always
