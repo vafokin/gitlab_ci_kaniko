@@ -1,0 +1,8 @@
+stages:
+  - build
+
+build_prod:
+  stage: build
+  tags: vadeb11-runner
+  script:
+    - docker-compose up -d
