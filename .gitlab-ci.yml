@@ -9,10 +9,11 @@ build_prod:
     PROD: "app_prod"
     PORT: '8000'
   script:
+    - cd django1/
     - docker build -t $CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA .
     - docker push $CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA
   rules:
-    - if: $CI_COMMIT_REF_NAME == "master"
+    - if: '$CI_COMMIT_REF_NAME == "master"'
       when: always
 
 build_dev:
