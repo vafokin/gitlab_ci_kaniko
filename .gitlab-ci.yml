@@ -8,6 +8,10 @@ build_prod:
   variables:
     PROD: "app_prod"
     PORT: '8000'
+  before_script:
+    - echo $CI_REGISTRY_IMAGE
+    - echo $PROD
+    - echo $CI_COMMIT_SHORT_SHA
   script:
     - cd django1/
     - docker build -t $CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA .
