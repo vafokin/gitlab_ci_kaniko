@@ -46,7 +46,7 @@ build_dev:
     - if: '$CI_COMMIT_REF_NAME == "dev"'
       when: always
 
-run_prod
+run_prod:
   stage: run
   tags:
     - vadeb11_runner
