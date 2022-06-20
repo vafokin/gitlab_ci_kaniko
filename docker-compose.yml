@@ -24,7 +24,7 @@ services:
 
   web:
     restart: always
-    build: $BUILD
+    image: $BUILD
     networks:
       - django_net
     expose:
