@@ -8,8 +8,8 @@ build_prod:
   tags: 
     - vadeb11_runner
   variables:
-    PROD: "app_prod"
-    BUILD: "$CI_REGISTRY_IMAGE:'$PROD'_'$CI_COMMIT_SHORT_SHA'"
+    PROD: "prod"
+    BUILD: "$CI_REGISTRY_IMAGE:app_$PROD_$CI_COMMIT_SHORT_SHA"
     PORT: '8000'
   before_script:
     - echo $BUILD
@@ -27,7 +27,7 @@ build_dev:
   tags:
     - vadeb11_runner
   variables:
-    DEV: "app_dev"
+    DEV: "dev"
     PORT: '8001'
   script:
     - docker-compose up -d
