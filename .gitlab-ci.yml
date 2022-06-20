@@ -4,6 +4,7 @@ services:
 
 stages:
   - build
+  - run
 
 build_prod:
   stage: build
@@ -12,10 +13,11 @@ build_prod:
   variables:
     PROD: "prod"
     BUILD: "$CI_REGISTRY_IMAGE:app_prod_$CI_COMMIT_SHORT_SHA"
+    TEST: "${CI_REGISTRY_IMAGE}:app_${PROD}_${CI_COMMIT_SHORT_SHA}"
     PORT: '8000'
   before_script:
     - echo $BUILD
-    - echo $CI_REGISTRY
+    - echo $TEST
     - docker login -u $USER -p $TOKEN $CI_REGISTRY
   script:
     - cd django1/
@@ -25,12 +27,28 @@ build_prod:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: always
 
-        #build_dev:
-        #  stage: build
-        #  tags:
-        #   - vadeb11_runner
-        #  variables:
-        #    DEV: "dev"
-        #    PORT: '8001'
-        #  script:
-        #  - docker-compose up -d
+build_dev:
+  stage: build
+  tags:
+    - vadeb11_runner
+  variables:
+    DEV: "dev"
+    PORT: '8001'
+    BUILD: "$CI_REGISTRY_IMAGE:app_dev_$CI_COMMIT_SHORT_SHA"
+  before_script:    
+    - docker login -u $USER -p $TOKEN $CI_REGISTRY
+  script:
+    - cd django1/
+    - docker build -t $BUILD .
+    - docker push $BUILD
+      #    - docker-compose up -d
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "dev"'
+      when: always
+
+run_prod
+  stage: run
+  tags:
+    - vadeb11_runner
+  script:
+    - docker-compose up -d
