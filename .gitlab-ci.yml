@@ -1,3 +1,5 @@
+
+
 stages:
   - build
 
@@ -7,15 +9,15 @@ build_prod:
     - vadeb11_runner
   variables:
     PROD: "app_prod"
+    BUILD: "$CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA"
     PORT: '8000'
   before_script:
-    - echo $CI_REGISTRY_IMAGE
-    - echo $PROD
-    - echo $CI_COMMIT_SHORT_SHA
+    - echo $BUILD
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
   script:
     - cd django1/
-    - docker build -t $CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA .
-    - docker push $CI_REGISTRY_IMAGE:$PROD_$CI_COMMIT_SHORT_SHA
+    - docker build -t $BUILD .
+    - docker push $BUILD
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: always
