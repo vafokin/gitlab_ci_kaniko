@@ -55,4 +55,5 @@ run_prod:
     BUILD: "${CI_REGISTRY_IMAGE}:${PROD}_${CI_COMMIT_SHORT_SHA}"
     PORT: '8000'
   script:
+    - docker login -u $USER -p $TOKEN $CI_REGISTRY
     - docker-compose up -d
