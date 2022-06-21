@@ -54,3 +54,4 @@ run:
   script:
     #    - docker login -u $USER -p $TOKEN $CI_REGISTRY
     - docker-compose up -d
+
