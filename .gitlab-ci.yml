@@ -6,54 +6,52 @@ stages:
   - build
   - run
 
-build_prod:
+
+variables:
+  BUILD: "${CI_REGISTRY_IMAGE}:${BRANCH}_${CI_COMMIT_SHORT_SHA}"
+
+build:
   stage: build
   tags: 
     - vadeb11_runner
-  variables:
-    PROD: "app_prod"
-      #    BUILD: "$CI_REGISTRY_IMAGE:app_prod_$CI_COMMIT_SHORT_SHA"
-    BUILD: "${CI_REGISTRY_IMAGE}:${PROD}_${CI_COMMIT_SHORT_SHA}"
-    PORT: '8000'
-  before_script:
-    - echo $BUILD
-    - echo $TEST
-    - docker login -u $USER -p $TOKEN $CI_REGISTRY
-  script:
-    - cd django1/
-    - docker build -t $BUILD .
-    - docker push $BUILD
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
+      variables:
+        BRANCH: "app_prod"
       when: always
-
-build_dev:
-  stage: build
-  tags:
-    - vadeb11_runner
-  variables:
-    DEV: "app_dev"
-    PORT: '8001'
-    BUILD: "${CI_REGISTRY_IMAGE}:${DEV}_${CI_COMMIT_SHORT_SHA}"
-  before_script:    
-    - docker login -u $USER -p $TOKEN $CI_REGISTRY
+      if: '$CI_COMMIT_REF_NAME == "dev"'
+      variables:
+        BRANCH: "app_dev"
+      when: always
+  before_script:
+    - echo $BUILD
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+      #    - docker login -u $USER -p $TOKEN $CI_REGISTRY
   script:
     - cd django1/
     - docker build -t $BUILD .
     - docker push $BUILD
-      #    - docker-compose up -d
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "dev"'
-      when: always
 
-run_prod:
+run:
   stage: run
   tags:
     - vadeb11_runner
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      variables:
+        BRANCH: "app_prod"
+        PORT: '8000'
+      when: always
+      if: '$CI_COMMIT_REF_NAME == "dev"'
+      variables:
+        BRANCH: "app_dev"
+        PORT: '8001'
+      when: always
   variables:
-    PROD: "app_prod"
-    BUILD: "${CI_REGISTRY_IMAGE}:${PROD}_${CI_COMMIT_SHORT_SHA}"
-    PORT: '8000'
+    BUILD: "${CI_REGISTRY_IMAGE}:${BRANCH}_${CI_COMMIT_SHORT_SHA}"
+  before_script:
+    - echo $BUILD
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker login -u $USER -p $TOKEN $CI_REGISTRY
+    #    - docker login -u $USER -p $TOKEN $CI_REGISTRY
     - docker-compose up -d
