@@ -9,29 +9,16 @@ stages:
 variables:
   BUILD: "${CI_REGISTRY_IMAGE}:${BRANCH}_${CI_COMMIT_SHORT_SHA}"
 
-build_prod:
+build:
   stage: build
   tags: 
     - vadeb11_runner
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_REF_NAME == "master"'
       variables:
         BRANCH: "app_prod"
       when: always
-  before_script:
-    - echo $BUILD
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - cd django1/
-    - docker build -t $BUILD .
-    - docker push $BUILD
-
-build_dev:
-  stage: build
-  tags:
-    - vadeb11_runner
-  rules:
-      if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_REF_NAME == "dev"'
       variables:
         BRANCH: "app_dev"
       when: always
@@ -43,30 +30,17 @@ build_dev:
     - docker build -t $BUILD .
     - docker push $BUILD
       
-run_prod:
+run:
   stage: run
   tags:
     - vadeb11_runner
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_REF_NAME == "master"'
       variables:
         BRANCH: "app_prod"
         PORT: '8000'
       when: always
-  variables:
-    BUILD: "${CI_REGISTRY_IMAGE}:${BRANCH}_${CI_COMMIT_SHORT_SHA}"
-  before_script:
-    - echo $BUILD
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - docker-compose up -d
-
-run_dev:
-  stage: run
-  tags:
-    - vadeb11_runner
-  rules:
-      if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
       variables:
         BRANCH: "app_dev"
         PORT: '8001'
