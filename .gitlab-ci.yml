@@ -14,7 +14,7 @@ build_prod:
   tags: 
     - vadeb11_runner
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == "master"'
       variables:
         BRANCH: "app_prod"
       when: always
@@ -48,7 +48,7 @@ run_prod:
   tags:
     - vadeb11_runner
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == "master"'
       variables:
         BRANCH: "app_prod"
         PORT: '8000'
