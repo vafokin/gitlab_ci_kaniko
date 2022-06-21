@@ -25,7 +25,6 @@ build:
   before_script:
     - echo $BUILD
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-      #    - docker login -u $USER -p $TOKEN $CI_REGISTRY
   script:
     - cd django1/
     - docker build -t $BUILD .
@@ -52,6 +51,5 @@ run:
     - echo $BUILD
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    #    - docker login -u $USER -p $TOKEN $CI_REGISTRY
     - docker-compose up -d
 
