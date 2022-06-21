@@ -14,11 +14,11 @@ build:
   tags: 
     - vadeb11_runner
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
       variables:
         BRANCH: "app_prod"
       when: always
-      if: '$CI_COMMIT_REF_NAME == "dev"'
+      if: '$CI_COMMIT_BRANCH == "dev"'
       variables:
         BRANCH: "app_dev"
       when: always
@@ -36,12 +36,12 @@ run:
   tags:
     - vadeb11_runner
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
       variables:
         BRANCH: "app_prod"
         PORT: '8000'
       when: always
-      if: '$CI_COMMIT_REF_NAME == "dev"'
+      if: '$CI_COMMIT_BRANCH == "dev"'
       variables:
         BRANCH: "app_dev"
         PORT: '8001'
