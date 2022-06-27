@@ -1,4 +1,3 @@
-#for test
 stages:
   - build
   - run
