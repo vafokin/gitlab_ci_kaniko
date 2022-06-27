@@ -1,6 +1,3 @@
-image: docker:dind
-services:
-  - docker:dind
 
 stages:
   - build
@@ -38,6 +35,8 @@ build:
 
 run:
   stage: run
+  image: 
+    name: docker:dind
   tags:
     - vadeb11_runner
   rules:
