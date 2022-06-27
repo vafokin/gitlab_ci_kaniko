@@ -1,6 +1,6 @@
-#image: docker:dind
-#services:
-#  - docker:dind
+image: docker:dind
+services:
+  - docker:dind
 
 stages:
   - build
@@ -27,11 +27,7 @@ build:
       when: always
   before_script:
     - echo $BUILD
-      #    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    # - cd django1/
-    # - docker build -t $BUILD .
-    # - docker push $BUILD
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - >-
