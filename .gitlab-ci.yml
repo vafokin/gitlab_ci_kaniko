@@ -1,7 +1,4 @@
-image: docker:dind
-services:
-  - docker:dind
-
+#for test
 stages:
   - build
   - run
@@ -11,6 +8,9 @@ variables:
 
 build:
   stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   tags: 
     - vadeb11_runner
   rules:
@@ -24,14 +24,20 @@ build:
       when: always
   before_script:
     - echo $BUILD
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd django1/
-    - docker build -t $BUILD .
-    - docker push $BUILD
-      
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --cache
+      --context "${CI_PROJECT_DIR}/django1/"
+      --dockerfile "${CI_PROJECT_DIR}/django1/Dockerfile"
+      --destination "${BUILD}"
+
 run:
   stage: run
+  image: 
+    name: docker:dind
   tags:
     - vadeb11_runner
   rules:
@@ -40,7 +46,7 @@ run:
         BRANCH: "app_prod"
         PORT: '8000'
       when: always
-    - if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_REF_NAME == "dev"'
       variables:
         BRANCH: "app_dev"
         PORT: '8001'
