@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3.9-bullseye
 
 WORKDIR /opt/django
 RUN wget "https://github.com/vafokin/django_blog_dockerlab/archive/refs/heads/main.zip"
